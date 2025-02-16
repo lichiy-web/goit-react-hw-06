@@ -3,6 +3,9 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { nanoid } from 'nanoid';
 import clsx from 'clsx';
+import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
+import { addContact } from '../../redux/contactsSlice';
 
 const initialValues = {
   name: '',
@@ -23,7 +26,29 @@ const ContactFormSchema = Yup.object().shape({
     .required('Required'),
 });
 
-const ContactForm = ({ onAddContact }) => {
+const ContactForm = () => {
+  const dispatch = useDispatch();
+  const {
+    contacts: { items: contactList },
+  } = useSelector(state => state.contacts);
+  const onAddContact = newContact => {
+    newContact.number = newContact.number.match(/\d/gi).join('');
+
+    const isExisted = contactList.some(
+      ({ number }) => number.match(/\d/gi).join('') === newContact.number
+    );
+    if (isExisted) {
+      toast.error('The contact containing this number already exists!', {
+        duration: 4000,
+      });
+      return;
+    }
+    dispatch(addContact(newContact));
+    toast.success('The new contact has successfully added!', {
+      duration: 4000,
+    });
+  };
+
   const handleSubmit = (newContact, actions) => {
     newContact.id = nanoid();
     onAddContact(newContact);

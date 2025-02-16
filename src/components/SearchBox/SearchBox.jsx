@@ -1,7 +1,16 @@
+import { useDispatch, useSelector } from 'react-redux';
 import css from './SearchBox.module.css';
 import { ImSearch } from 'react-icons/im';
+import { changeFilter } from '../../redux/filtersSlice';
 
-const SearchBox = ({ searchQuery, onSearch }) => {
+const SearchBox = () => {
+  const dispatch = useDispatch();
+  const {
+    filters: { name: searchQuery },
+  } = useSelector(state => state.filters);
+  const onSearch = e => {
+    dispatch(changeFilter(e.target.value));
+  };
   return (
     <div className={css.SearchBox}>
       <label className={css.searchLabelWrapper}>

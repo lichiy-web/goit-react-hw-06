@@ -1,18 +1,24 @@
 import css from './ContactList.module.css';
 import Contact from '../Contact/Contact.jsx';
-// import contacts from '../../db/contactListData.json';
+import { useSelector } from 'react-redux';
+import Notification from '../Notification/Notification.jsx';
 
-const ContactList = ({ contacts, onDeleteContact }) => {
+const ContactList = () => {
+  const {
+    contacts: { items: contactList },
+  } = useSelector(state => state.contacts);
+  const {
+    filters: { name: searchQuery },
+  } = useSelector(state => state.filters);
+
+  if (!contactList?.length) return <Notification />;
+  const matchedContacs = contactList.filter(({ name }) =>
+    name.trim().toLowerCase().includes(searchQuery.trim().toLowerCase())
+  );
   return (
     <div className={css.contactList}>
-      {contacts.map(contacts => {
-        return (
-          <Contact
-            key={contacts.id}
-            {...contacts}
-            onDeleteContact={onDeleteContact}
-          />
-        );
+      {matchedContacs.map(contact => {
+        return <Contact key={contact.id} {...contact} />;
       })}
     </div>
   );
