@@ -11,6 +11,9 @@ const ContactList = () => {
     filters: { name: searchQuery },
   } = useSelector(state => state.filters);
 
+  // const itemList = useSelector(state => state.contacts.items);
+  // console.log('itemList =>', itemList);
+
   if (!contactList?.length) return <Notification />;
   const matchedContacs = contactList.filter(({ name }) =>
     name.trim().toLowerCase().includes(searchQuery.trim().toLowerCase())
